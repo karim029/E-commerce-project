@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(body_parser.json());
 
 //* routes
-app.use('/users', userRoutes);
+app.use('/users', UserRoutes);
 
 //* Error handling middleware
 app.use((err, req, res, next) => {
