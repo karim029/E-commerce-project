@@ -9,22 +9,27 @@ class UserController {
     //* [500] internal server error
 
     static async register(req, res) {
-        const { name, password } = req.body;
+        const { name, email ,password } = req.body;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         // Validate that name and password are provided
-        if (!name || !password) {
-            return res.status(400).json({ success: false, message: 'Name and Password are required' });
+        if (!name || !password || !email) {
+            return res.status(400).json({ success: false, message: 'Name, Email and Password are required' });
+        }
+
+        if (!emailRegex.test(email)) {
+        return res.status(400).json({ success: false, message: 'Invalid email format' });
         }
 
         try {
             // Check if the user already exists
-            const existingUser = await UserService.findUserByName(name);
+            const existingUser = await UserService.findUserByEmail(email);
             if (existingUser) {
-                return res.status(400).json({ success: false, message: 'User with this name already exists.' });
+                return res.status(400).json({ success: false, message: 'User with this email already exists.' });
             }
 
             // Create the new user
-            const newUser = await UserService.createUser(name, password);
+            const newUser = await UserService.createUser(name,email ,password);
             res.status(201).json({ success: true, message: 'User created successfully.', data: newUser });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
@@ -37,10 +42,10 @@ class UserController {
     //* [500] internal server error
 
     static async login(req, res) {
-        const { name, password } = req.body;
+        const { email, password } = req.body;
 
         try {
-            const user = await UserService.findUserByName(name);
+            const user = await UserService.findUserByEmail(email);
             // Check if user exists and if the password matches
             if (!user || !(await bcrypt.compare(password, user.password))) {
                 return res.status(401).json({ success: false, message: 'Invalid name or password.' });

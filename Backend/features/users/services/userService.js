@@ -9,19 +9,19 @@ class UserService {
     //* return: a promise that resolves to the document saved
     //* notes: encrypts the user password and store it in the db
 
-    static async createUser(name, password) {
+    static async createUser(name,email ,password) {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ name, password: hashedPassword });
+        const user = new User({ name, password: hashedPassword, email: email });
         return await user.save();
     }
 
-    //* [method] find user by name
-    //* args: name[String] 
+    //* [method] find user by email
+    //* args: email[String] 
     //* return: a promise that resolves to the document found 
-    //* notes: uses mongoose built in function to search for a document using the name
+    //* notes: uses mongoose built in function to search for a document using the email address
 
-    static async findUserByName(name) {
-        return await User.findOne({ name });
+    static async findUserByEmail(email) {
+        return await User.findOne({ email });
     }
     //* [method] find user by Id
     //* args: userId[String] 
