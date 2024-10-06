@@ -1,6 +1,7 @@
 //* import packages
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const {generateToken} = require('../../../utils/tokenUtil');
 
 //* user service class
 class UserService {
@@ -60,6 +61,35 @@ class UserService {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         return await User.findByIdAndUpdate(userId, { password: hashedPassword }, { new: true });
     }
+
+    //* [method] generate a password reset token
+    //* args: email[String]
+    //* return the generated token
+    
+    static async generatePasswordResetToken(email) {
+        const user = await UserService.findUserByEmail(email);
+        if (!user) return null;
+
+        const token = generateToken(user._id);
+
+        user.passwordResetToken = token;
+        user.passwordResetExpires = Date.now() + 3600000; //* 1h
+
+        await user.save();
+        return token;
+    }
+
+    //* [method] find user by reset token
+    //* args: token[String]
+    //* return the found user 
+
+    static async findUserByResetToken(token) {
+        return await user.findOne({
+            passwordResetToken: token,
+            passwordResetExpires: { $gt: Date.now() },
+        });
+    }
+    
 
 }
 

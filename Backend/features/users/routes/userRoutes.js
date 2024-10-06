@@ -8,11 +8,18 @@ const authMiddleware = require('../../../middleware/authentication/authMiddlewar
 //* configure router
 
 const router = express.Router();
+
 //? Registration route
 router.post('/register', asyncHandler(UserController.register));
 
 //? Login route
 router.post('/login', asyncHandler(UserController.login));
+
+//? Request Password reset route
+router.post('/request-password-reset', asyncHandler(UserController.requestPasswordReset));
+
+//? Reset password route
+router.post('/reset-password', asyncHandler(UserController.resetPassword));
 
 //? Authenticated routes
 router.get('/:id',authMiddleware, asyncHandler(UserController.findUser));

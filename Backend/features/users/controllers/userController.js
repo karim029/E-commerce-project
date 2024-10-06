@@ -113,6 +113,49 @@ class UserController {
             res.status(500).json({ success: false, message: error.message });
         }
     }
+
+    //* [Method] controller method to request password reset token
+    //* [404] not found
+    //* [200] ok
+    //* [500] internal server error
+
+    static async requestPasswordReset(req, res) {
+        const { email } = req.body;
+        try {
+            const token = await UserService.generatePasswordResetToken(email);
+
+            if (!token) {
+                return res.status(404).json({ success: false, message: 'User not found.' });
+            }
+            //* sends token via email (for now it will be in the response)
+            res.status(200).json({ success: true, message: 'Password reset token generated.', token });
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
+    static async resetPassword(req, res) {
+        const { token, newPassword } = req.body;
+        try {
+            const user = await UserService.findUserByResetToken(token);
+            if (!user) {
+                return res.status(400).json({ success: false, message: 'Invalid or expired token.' });
+            }
+
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            user.password = hashedPassword;
+            user.passwordResetToken = null;
+            user.passwordResetExpires = null;
+            await user.save();
+
+            res.status(200).json({ success: true, message: 'Password reset successful.' });
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+
+        }
+    }
 }
 
 module.exports = UserController;
