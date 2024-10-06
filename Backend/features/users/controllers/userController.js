@@ -52,7 +52,7 @@ class UserController {
             const user = await UserService.findUserByEmail(email);
             // Check if user exists and if the password matches
             if (!user || !(await bcrypt.compare(password, user.password))) {
-                return res.status(401).json({ success: false, message: 'Invalid name or password.' });
+                return res.status(401).json({ success: false, message: 'Invalid email or password.' });
             }
             const token = tokenUtil.generateToken(user._id);
             res.status(200).json({ success: true, message: 'Login successful.',token, data: user });
