@@ -89,6 +89,15 @@ class UserService {
             passwordResetExpires: { $gt: Date.now() },
         });
     }
+
+    //* [method] get all users record (supports pagination)
+    //* args: page[Number], limit[Number]
+    //* return all users in chunks 
+
+    static async getUsers(page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        return await user.find().skip(skip).limit(limit);
+    }
     
 
 }

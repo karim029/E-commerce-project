@@ -2,6 +2,7 @@
 const UserService = require('../services/userService');
 const bcrypt = require('bcrypt');
 const tokenUtil = require('../../../utils/tokenUtil');
+const User = require('../models/user');
 
 class UserController {
     //* [Method] controller method to register user and handle validation
@@ -150,6 +151,20 @@ class UserController {
             await user.save();
 
             res.status(200).json({ success: true, message: 'Password reset successful.' });
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+
+        }
+    }
+
+    static async getUsers(req, res) {
+        const { page = 1, limit = 10 } = req.query;
+
+        try {
+            const users = await UserService.getUsers(page, limit);
+            const totalUsers = await User.countDocuments();
+            res.json({ success: true, data: users, totalPages: Math.ceil(totalUsers / limit), currentPage: page });
 
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });

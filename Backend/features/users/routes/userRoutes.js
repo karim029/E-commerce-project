@@ -25,5 +25,6 @@ router.post('/reset-password', asyncHandler(UserController.resetPassword));
 router.get('/:id',authMiddleware, asyncHandler(UserController.findUser));
 router.put('/:id',authMiddleware, asyncHandler(UserController.updateUser));
 router.delete('/:id',authMiddleware, asyncHandler(UserController.deleteUser));
+router.get('/',authMiddleware, asyncHandler(UserController.getUsers));
 
 module.exports = router;
