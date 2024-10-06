@@ -37,6 +37,10 @@ class UserService {
     //* return: a promise that resolves to the document to be updated 
 
     static async updateUser(userId, updateData) {
+        if (updateData.password) {
+            updateData.password = await bcrypt.hash(updateData.password, 10);
+        }
+        updateData.updatedAt = Date.now();
         return await User.findByIdAndUpdate(userId, updateData, { new: true });
     }
 
@@ -46,6 +50,15 @@ class UserService {
 
     static async deleteUser(userId) {
         return await User.findByIdAndDelete(userId);
+    }
+
+    //* [method] update user password 
+    //* args: userId[String], newPassword[String]
+    //* return: a promise that resolves to the document with the updated password 
+
+    static async updatePassword(userId, newPassword) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        return await User.findByIdAndUpdate(userId, { password: hashedPassword }, { new: true });
     }
 
 }
