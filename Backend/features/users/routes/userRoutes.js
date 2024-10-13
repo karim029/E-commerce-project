@@ -19,7 +19,7 @@ router.post('/login', asyncHandler(UserController.login));
 router.post('/request-password-reset', asyncHandler(UserController.requestPasswordReset));
 
 //? Reset password route
-router.post('/reset-password', asyncHandler(UserController.resetPassword));
+router.post('/reset-password/:token', asyncHandler(UserController.resetPassword));
 
 //? Authenticated routes
 router.get('/:id',authMiddleware, asyncHandler(UserController.findUser));

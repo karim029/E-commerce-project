@@ -3,7 +3,7 @@ const UserService = require('../services/userService');
 const bcrypt = require('bcrypt');
 const tokenUtil = require('../../../utils/tokenUtil');
 const User = require('../models/user');
-
+const { sendEmail } = require('../../../utils/emailService');
 class UserController {
     //* [Method] controller method to register user and handle validation
     //* [201] created
@@ -128,7 +128,12 @@ class UserController {
             if (!token) {
                 return res.status(404).json({ success: false, message: 'User not found.' });
             }
-            //* sends token via email (for now it will be in the response)
+            //? consturct the password reset link
+            const resetLink = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
+
+            //? use the email services util
+            await sendEmail(email, 'Password Reset Request', `You requested to reset your password. Click the following link to reset it: ${resetLink}. This link is valid for 1 hour.`);
+
             res.status(200).json({ success: true, message: 'Password reset token generated.', token });
 
         } catch (error) {
@@ -137,7 +142,9 @@ class UserController {
     }
 
     static async resetPassword(req, res) {
-        const { token, newPassword } = req.body;
+        const { newPassword } = req.body;
+        const { token } = req.params;
+        
         try {
             const user = await UserService.findUserByResetToken(token);
             if (!user) {

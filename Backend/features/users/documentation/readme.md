@@ -17,6 +17,7 @@ This is a User Management API built using Node.js, Express, and MongoDB with Mon
 - [API Endpoints](#api-endpoints)
   - [User Registration](#user-registration)
   - [User Login](#user-login)
+  - [Password Reset](#password-reset)
   - [Get User by ID](#get-user-by-id)
   - [Update User](#update-user)
   - [Delete User](#delete-user)
@@ -133,7 +134,46 @@ PORT=5000
 
 ---
 
-### 3. Get User by ID
+### 3. Password reset by email
+
+**URL**: `/users/reset-password`
+**Method**: `POST`
+**Description**: Sends a password reset email to the user.
+
+#### Request Body:
+
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+#### Response:
+
+**Status**: `200 OK`
+
+**Body**:
+
+```json
+{
+  "success": true,
+  "message": "Password reset email sent."
+}
+```
+
+#### Error Responses:
+
+`404`: If the user is not found.
+`500`: If there is an issue sending the email.
+
+#### Password Reset Flow:
+
+- User requests a password reset by sending their email to the endpoint.
+- An email is sent with a reset link, which contains a token.
+- The user clicks the reset link and is directed to a password reset page.
+- The user submits a new password, and the password is updated in the system.
+
+### 4. Get User by ID
 
 - **URL**: `/users/:id`
 - **Method**: `GET`
@@ -167,7 +207,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 4. Update User
+### 5. Update User
 
 - **URL**: `/users/:id`
 - **Method**: `PUT`
@@ -209,7 +249,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 5. Delete User
+### 6. Delete User
 
 - **URL**: `/users/:id`
 - **Method**: `DELETE`
@@ -239,7 +279,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 6. Get All Users with Pagination
+### 7. Get All Users with Pagination
 
 - **URL**: `/users`
 - **Method**: `GET`
@@ -333,7 +373,7 @@ Here's the basic folder structure for this project:
 |   |-- user.test.js        // Unit and integration tests
 |
 |-- utils
-|   |-- hashPassword.js     // Utility function for hashing passwords
+|   |-- emailService.js     // Utility function for sending emails
 |   |-- tokenUtils.js       // Utility for JWT token generation and verification
 |
 |-- .env                    // Environment variables
@@ -354,6 +394,5 @@ Here's the basic folder structure for this project:
 
 ## Future Enhancements
 
-- **Password Reset**: Implement a feature to allow users to reset their password via email.
 - **Roles and Permissions**: Add roles such as admin and standard user with different access permissions.
 - **Improved Pagination**: Enhance pagination to support sorting and filtering options.
