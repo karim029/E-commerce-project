@@ -84,7 +84,7 @@ class UserService {
     //* return the found user 
 
     static async findUserByResetToken(token) {
-        return await user.findOne({
+        return await User.findOne({
             passwordResetToken: token,
             passwordResetExpires: { $gt: Date.now() },
         });
@@ -96,7 +96,7 @@ class UserService {
 
     static async getUsers(page = 1, limit = 10) {
         const skip = (page - 1) * limit;
-        return await user.find().skip(skip).limit(limit);
+        return await User.find().skip(skip).limit(limit);
     }
     
 
