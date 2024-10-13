@@ -7,7 +7,6 @@ const app = require('../../../app');
 const User = require('../models/user');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const bcrypt = require('bcrypt');
 const tokenUtil = require('../../../utils/tokenUtil');
 
 dotenv.config();
