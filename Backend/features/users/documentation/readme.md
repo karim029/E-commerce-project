@@ -345,6 +345,8 @@ We have written tests using **Jest** and **Supertest** to ensure the reliability
   - Get user by ID (valid and invalid cases).
   - Update user (valid and invalid cases).
   - Delete user (valid and invalid cases).
+  - Password reset token request via email
+  - password change (valid and invalid cases)
   - Pagination for user listing.
 
 The test suite is located in `tests/user.test.js`.
