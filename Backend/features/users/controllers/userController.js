@@ -167,11 +167,10 @@ class UserController {
 
     static async getUsers(req, res) {
         const { page = 1, limit = 10 } = req.query;
-
         try {
             const users = await UserService.getUsers(page, limit);
             const totalUsers = await User.countDocuments();
-            res.json({ success: true, data: users, totalPages: Math.ceil(totalUsers / limit), currentPage: page });
+            res.status(200).json({ success: true, data: users, totalPages: Math.ceil(totalUsers / limit), currentPage: page });
 
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
