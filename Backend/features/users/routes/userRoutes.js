@@ -5,8 +5,8 @@ const UserController = require('../controllers/userController');
 const asyncHandler = require('express-async-handler');
 const authMiddleware = require('../../../middleware/authentication/authMiddleware');
 const roleMiddleware = require('../../../middleware/roles/rolesMiddleware');
-//* configure router
 
+//* configure router
 const router = express.Router();
 
 //? Registration route
