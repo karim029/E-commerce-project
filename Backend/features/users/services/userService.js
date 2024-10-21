@@ -96,7 +96,7 @@ class UserService {
 
     static async getUsers(page = 1, limit = 10) {
         const skip = (page - 1) * limit;
-        return await User.find().skip(skip).limit(limit);
+        return await User.find().skip(skip).limit(limit).select('name email userId createdAt role');
     }
     
 
