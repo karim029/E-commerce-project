@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const tokenUtil = require('../../../utils/tokenUtil');
 const User = require('../models/user');
 const { sendEmail } = require('../../../utils/emailService');
-const { generateOTP } = require('../../../utils/codeGenerator');
 class UserController {
     //* [Method] controller method to register user and handle validation
     //* [201] created
@@ -35,8 +34,8 @@ class UserController {
             const newUser = await UserService.createUser(name, email, password);
             //* generate the JWT 
             const token = tokenUtil.generateToken(newUser._id);
-            //* generate OTP
-            const emailOTP = generateOTP();
+            //* request OTP from the service layer
+            const emailOTP = await UserService.generateEmailOTP(email);
             //* send OTP to verify email
             sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
             
@@ -182,6 +181,30 @@ class UserController {
             res.status(500).json({ success: false, message: error.message });
 
         }
+    }
+
+    static async verifyEmailOTP(req, res) {
+        const { email, OTP } = req.body;
+        try {
+            const user = await UserService.findUserByEmail(email);
+            if (OTP != user.userVerificationOTP) {
+                res.status(400).json({ success: false, message: 'Incorrect verification code' });
+            }
+            if (OTP == user.userVerificationOTP && Date.now() > user.verificationOTPexpiresAt ) {
+                res.status(408).json({ success: false, message: 'verification Expired Please try again' });
+            }
+
+            user.userVerificationOTP = null;
+            user.verificationOTPexpiresAt = null;
+            user.isUserVerified = true;
+            await user.save();
+
+            res.status(200).json({ success: true, message: 'Email successfuly verified' });
+            
+        } catch (error) {
+            
+        }
+
     }
 }
 

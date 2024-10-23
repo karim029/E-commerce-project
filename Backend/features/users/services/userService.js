@@ -1,7 +1,9 @@
 //* import packages
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
-const {generateToken} = require('../../../utils/tokenUtil');
+const { generateToken } = require('../../../utils/tokenUtil');
+const { generateOTP } = require('../../../utils/codeGenerator');
+
 
 //* user service class
 class UserService {
@@ -97,6 +99,22 @@ class UserService {
     static async getUsers(page = 1, limit = 10) {
         const skip = (page - 1) * limit;
         return await User.find().skip(skip).limit(limit).select('name email userId createdAt role');
+    }
+    
+    //* [method] to generate email verification 6 digits code and store it in the db
+    //* args: email[String]
+    //* return Generated OTP 
+
+    static async generateEmailOTP(email) {
+        const user = await UserService.findUserByEmail(email);
+        
+        const OTP = generateOTP();
+        user.userVerificationOTP = OTP;
+        user.verificationOTPexpiresAt = Date.now() + 3600000; //* 1h
+        await user.save();
+
+        return OTP;
+
     }
     
 
