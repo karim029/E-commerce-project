@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const tokenUtil = require('../../../utils/tokenUtil');
 const User = require('../models/user');
 const { sendEmail } = require('../../../utils/emailService');
+const { generateOTP } = require('../../../utils/codeGenerator');
 class UserController {
     //* [Method] controller method to register user and handle validation
     //* [201] created
@@ -34,7 +35,12 @@ class UserController {
             const newUser = await UserService.createUser(name, email, password);
             //* generate the JWT 
             const token = tokenUtil.generateToken(newUser._id);
-            res.status(201).json({ success: true, message: 'User created successfully.',token ,data: newUser });
+            //* generate OTP
+            const emailOTP = generateOTP();
+            //* send OTP to verify email
+            sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
+            
+            return res.status(201).json({ success: true, message: 'User created successfully.',token ,data: newUser });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }

@@ -30,6 +30,19 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+    isUserVerified: {
+        type: Boolean,
+        default: false
+    },
+    userVerificationOTP: {
+        type: Number,
+        default: null
+        
+    },
+    verificationOTPexpiresAt: {
+        type: Date,
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now,
