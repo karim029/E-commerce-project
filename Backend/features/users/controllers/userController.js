@@ -145,6 +145,11 @@ class UserController {
             res.status(500).json({ success: false, message: error.message });
         }
     }
+    //* [Method] controller method reset the user password
+    //* [400] bad request
+    //* [200] ok
+    //* [500] internal server error
+
 
     static async resetPassword(req, res) {
         const { newPassword } = req.body;
@@ -169,6 +174,10 @@ class UserController {
 
         }
     }
+    //* [Method] controller method to get all users
+    //* [200] ok
+    //* [500] internal server error
+
 
     static async getUsers(req, res) {
         const { page = 1, limit = 10 } = req.query;
@@ -182,6 +191,12 @@ class UserController {
 
         }
     }
+    //* [Method] controller method to verify email verification OTP
+    //* [400] bad request
+    //* [408] expired
+    //* [200] ok
+    //* [500] internal server error
+
 
     static async verifyEmailOTP(req, res) {
         const { email, OTP } = req.body;
@@ -202,9 +217,28 @@ class UserController {
             res.status(200).json({ success: true, message: 'Email successfuly verified' });
             
         } catch (error) {
-            
+            res.status(500).json({ success: false, message: error.message });
         }
 
+    }
+    //* [Method] controller method to resend email verification OTP
+    //* [200] ok
+    //* [500] internal server error
+
+    static async resendEmailVerificationOTP(req,res) {
+        const { email } = req.body;
+
+        try {
+            const user = await UserService.findUserByEmail(email);
+            const emailOTP = await UserService.generateEmailOTP(email);
+            sendEmail(email, 'Email verification', `Your verification code is ${emailOTP}`);
+            res.status(200).json({ success: true, message: 'Email verification sent, please check your inbox' });
+
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+
+        }
     }
 }
 
