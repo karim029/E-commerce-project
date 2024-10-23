@@ -21,6 +21,10 @@ router.post('/request-password-reset', asyncHandler(UserController.requestPasswo
 //? Reset password route
 router.post('/reset-password/:token', asyncHandler(UserController.resetPassword));
 
+//? Email verification routes
+router.post('/verify-email', asyncHandler(UserController.verifyEmailOTP));
+router.post('/resend-email-verification', asyncHandler(UserController.resendEmailVerificationOTP));
+
 //? Authenticated routes
 router.get('/:id',authMiddleware, asyncHandler(UserController.findUser));
 router.put('/:id',authMiddleware, asyncHandler(UserController.updateUser));
